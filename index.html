@@ -33,6 +33,17 @@ img{display:block;max-width:100%}
 .bar nav a{text-decoration:none}
 .bar nav a:hover{text-decoration:underline}
 
+.language-toggle{border:1px solid var(--ink);background:transparent;color:var(--ink);font:600 14px var(--body);padding:7px 14px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.language-toggle:hover{background:var(--ink);color:var(--green)}
+html[lang="en"]{direction:ltr}
+html[lang="en"] body{font-family:Arial,"Segoe UI",sans-serif;direction:ltr}
+html[lang="en"] .bar{justify-content:space-between}
+html[lang="en"] .hero-row,html[lang="en"] .sec-grid{direction:ltr}
+html[lang="en"] .tl{padding-left:28px;padding-right:0}
+html[lang="en"] .viewer-controls label{text-align:left}
+html[lang="en"] .table-footer{direction:ltr}
+html[lang="en"] .language-toggle{font-family:Arial,sans-serif}
+
 /* ---------- hero ---------- */
 .hero{padding-block:clamp(36px,7vw,96px) clamp(56px,8vw,110px)}
 .hero h1{font-family:var(--display);font-weight:400;font-size:clamp(76px,19vw,264px);line-height:.88;letter-spacing:-.01em}
@@ -322,6 +333,7 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
 <body>
 
 <header class="wrap bar">
+  <button type="button" id="languageToggle" class="language-toggle" aria-label="Switch to English">English</button>
   <nav aria-label="بخش‌های صفحه">
     <a href="#background">سوابق</a>
     <a href="#journal">ژورنال معاملات</a>
@@ -489,17 +501,47 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
   const pages=Math.max(1,Math.ceil(filtered.length/pageSize)); page=Math.min(page,pages-1);
   head.innerHTML='<tr>'+d.columns.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr>';
   const slice=filtered.slice(page*pageSize,(page+1)*pageSize);
-  body.innerHTML=slice.map(x=>'<tr>'+x.r.map(v=>'<td title="'+esc(v)+'">'+esc(v)+'</td>').join('')+'</tr>').join('') || '<tr><td colspan="'+d.columns.length+'">موردی پیدا نشد</td></tr>';
-  count.textContent=filtered.length.toLocaleString('fa-IR')+' ردیف';
-  pageInfo.textContent=(filtered.length?((page*pageSize+1).toLocaleString('fa-IR')+' تا '+Math.min((page+1)*pageSize,filtered.length).toLocaleString('fa-IR')):'۰')+' از '+filtered.length.toLocaleString('fa-IR');
+  body.innerHTML=slice.map(x=>'<tr>'+x.r.map(v=>'<td title="'+esc(v)+'">'+esc(v)+'</td>').join('')+'</tr>').join('') || '<tr><td colspan="'+d.columns.length+'">'+(en?'No results found':'موردی پیدا نشد')+'</td></tr>';
+  const en=document.documentElement.lang==='en';\n  const locale=en?'en-US':'fa-IR';\n  count.textContent=filtered.length.toLocaleString(locale)+(en?' rows':' ردیف');
+  pageInfo.textContent=(filtered?((filtered.length?(page*pageSize+1).toLocaleString(locale)+(en?' to ':' تا ')+Math.min((page+1)*pageSize,filtered.length).toLocaleString(locale):'0')):'0')+(en?' of ':' از ')+filtered.length.toLocaleString(locale);
   prev.disabled=page===0; next.disabled=page>=pages-1;
  }
  source.addEventListener('change',()=>{document.getElementById('sheetLabel').hidden=source.value==='csv';page=0;search.value='';render()});
  sheet.addEventListener('change',()=>{page=0;render()}); search.addEventListener('input',()=>{page=0;render()});
  prev.addEventListener('click',()=>{page--;render()}); next.addEventListener('click',()=>{page++;render()});
- document.getElementById('sheetLabel').hidden=source.value==='csv';render();
+ document.getElementById('sheetLabel').hidden=source.value==='csv';render();\n window.addEventListener('site-language-change',render);
 })();
 </script>
 
+<script>
+(()=> {
+ const dict={"سوابق":"Experience","ژورنال معاملات":"Trading Journal","تماس":"Contact","امیرحسین":"Amirhossein","ایروانی":"Iravani","تریدر بازار کریپتو، حسابدار بنگاه بازرگانی و دانشجوی مدیریت مالی در مشهد. از سال ۱۴۰۳ معامله می‌کنم و هر معامله‌ام را با جزئیات در ژورنال ثبت می‌کنم.":"Crypto trader, commercial business accountant, and finance student based in Mashhad. I have been trading since 2024 and record every trade in detail in my journal.","دنبال تیم تحلیل یا فضای ترید و کریپتویی هستم که همکارانش واقعاً دنبال بازار مالی باشند و هدفشان ساختن یا جلو بردن چیزی در حوزه مالی و اقتصادی باشد. تولید محتوای درست هم برایم جذاب است.":"I am looking to join an analytical team or a trading and crypto-focused environment where people are genuinely interested in financial markets and building meaningful things in finance and economics. I am also interested in creating thoughtful, useful content.","تلگرام پیام دهید":"Message me on Telegram","ژورنال معاملاتم را ببینید":"View my trading journal","حسابدار بنگاه بازرگانی":"Commercial Business Accountant","برادران ساکن":"Saken Brothers","تریدر بازار کریپتو (آزاد)":"Independent Crypto Trader","فریلنسر":"Freelance","معامله در بازار فیوچرز، با ثبت کامل هر معامله، اندازه ریسک و وضعیت ذهنی هنگام ورود. نتایج واقعی در بخش بعد آمده است.":"Trading futures while documenting every trade, risk size, and mental state at entry. Actual results are shown below.","کارشناسی مدیریت مالی":"B.A. in Financial Management","دانشگاه آزاد اسلامی مشهد":"Islamic Azad University, Mashhad","هر مربع، یک پوزیشن بسته‌شده در بازار فیوچرز است؛ از ۲۸ آبان ۱۴۰۴ تا ۱۳ آبان ۱۴۰۵، به ترتیب زمان. برنده‌ها و بازنده‌ها هر دو در این تصویر هستند.":"Each square represents a closed futures position, shown chronologically from November 19, 2025 to November 4, 2026. Both winning and losing trades are included.","معامله سودده":"Winning trade","معامله زیان‌ده":"Losing trade","پوزیشن شورت (بدون نقطه: لانگ)":"Short position (no dot: long)","سود و زیان تجمعی (خط چین: صفر). قدیمی‌ترین معامله سمت راست است.":"Cumulative profit and loss (dashed line: zero). The oldest trade is on the right.","چه چیزی ثبت می‌شود":"What I Track","در ژورنال اکسلی‌ام برای هر معامله این‌ها را می‌نویسم: استراتژی، ساعت و تایم‌فریم ورود، اندازه پوزیشن و اهرم، وضعیت ذهنی، چک‌لیست ورود، اسکرین‌شات، وضعیت RSI و دامیننس بیت‌کوین و اشتباهات. ریسک هر معامله حدود ۰٫۲۲٪ حساب است و ضرر هر معامله‌ی بازنده در ژورنال دوم به‌طور میانگین ۱R مانده است.":"For every trade, my Excel journal records the strategy, entry time and timeframe, position size and leverage, mental state, entry checklist, screenshots, RSI and Bitcoin dominance, and mistakes. Risk per trade is approximately 0.22% of the account, and the average loss on losing trades in the second journal has remained at 1R.","دو ژورنال":"Two Journals","ژورنال اول (تیر تا آبان ۱۴۰۴) با ۲۰۰ دلار شروع شد و روی ۵۴ معامله با ۲۱۵ دلار بسته شد. ژورنال دوم (از آبان ۱۴۰۴) تا امروز ۸۵ معامله ثبت کرده که ۲۶ تا سودده بوده‌اند؛ میانگین سود برنده‌ها ۲٫۶R و میانگین ضرر بازنده‌ها ۱R بوده است. حجم معاملات بسته‌شده در داده صرافی حدود ۸۳۵۲ دلار است.":"The first journal (July–November 2025) started with $200 and ended at $215 across 54 trades. The second journal (since November 2025) contains 85 trades, 26 of them profitable. Average winning trade: 2.6R; average losing trade: 1R. The exchange data shows approximately $8,352 in closed trading volume.","فایل‌های اصلی و ژورنال آنلاین":"Source Files & Online Journal","فایل‌های اصلی را می‌توانی دانلود کنی؛ یا بدون خروج از سایت، شیت‌ها و معاملات را جست‌وجو و بررسی کنی.":"You can download the original files or search and review the sheets and trades without leaving this website.","دانلود ژورنال تیر تا مهر ۱۴۰۴":"Download Journal: Jul–Oct 2025","دانلود ژورنال از آبان ۱۴۰۴":"Download Journal: Since Nov 2025","دانلود خروجی فیوچرز (CSV)":"Download Futures Export (CSV)","مشاهده اطلاعات داخل سایت":"Browse Data on This Site","داده‌های شیت‌های فایل‌های اصلی، به‌همراه خروجی معاملات صرافی":"Data from the original workbook sheets, plus the exchange trade export","منبع داده":"Data source","ژورنال تیر تا مهر ۱۴۰۴":"Journal: Jul–Oct 2025","ژورنال از آبان ۱۴۰۴":"Journal: Since Nov 2025","خروجی معاملات فیوچرز (CSV)":"Futures Trades Export (CSV)","شیت":"Sheet","جست‌وجو":"Search","نماد، استراتژی، نتیجه و...":"Symbol, strategy, result, etc.","قبلی":"Previous","بعدی":"Next","نمایش آنلاین برای بررسی سریع داده‌هاست؛ فایل‌های دانلودی همان فایل‌های اصلی Excel با فرمت XLSB هستند.":"The online view is for quick data review. Downloaded files are the original Excel workbooks in XLSB format.","عددها از خروجی صرافی (پوزیشن‌های بسته‌شده فیوچرز) و دو فایل ژورنال اکسل خودم محاسبه شده‌اند. این‌ها نتیجه گذشته‌اند و تضمینی برای آینده نیستند.":"Figures are calculated from the exchange export (closed futures positions) and my two Excel journal files. These are historical results and do not guarantee future performance.","اگر تیمی دارید که بازار مالی را جدی می‌گیرد، بنویسید.":"If your team takes financial markets seriously, get in touch.","کانال تلگرام (نمونه کار)":"Telegram Channel (Work Samples)","ساکن مشهد.":"Based in Mashhad.","امیرحسین ایروانی، مشهد":"Amirhossein Iravani, Mashhad"};
+ const root=document.documentElement, button=document.getElementById('languageToggle');
+ if(!button) return;
+ const nodes=[];
+ const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+ while(walker.nextNode()){const n=walker.currentNode;const key=n.nodeValue.trim();if(dict[key])nodes.push({n,original:n.nodeValue,key});}
+ const attrs=[];
+ document.querySelectorAll('[placeholder],[aria-label]').forEach(el=>{
+   for(const attr of ['placeholder','aria-label']) if(el.hasAttribute(attr)) attrs.push({el,attr,original:el.getAttribute(attr)});
+ });
+ function setLanguage(lang){
+   const en=lang==='en';
+   root.lang=en?'en':'fa';root.dir=en?'ltr':'rtl';
+   nodes.forEach(x=>{x.n.nodeValue=x.original.replace(x.key,en?dict[x.key]:x.key)});
+   attrs.forEach(x=>{const v=x.original.trim();if(en){if(v==='بخش‌های صفحه')x.el.setAttribute(x.attr,'Page sections');else if(v==='۹۰ معامله بسته‌شده، ۱۹ سودده و بقیه زیان‌ده')x.el.setAttribute(x.attr,'90 closed trades, 19 winners and the rest losers');}else x.el.setAttribute(x.attr,x.original)});
+   document.title=en?'Amirhossein Iravani | Trader & Financial Market Analyst':'امیرحسین ایروانی | تریدر و تحلیلگر بازار مالی';
+   const meta=document.querySelector('meta[name="description"]');
+   if(meta)meta.content=en?'Amirhossein Iravani, crypto trader, commercial accountant, and finance student. Trading journal and professional experience.':'امیرحسین ایروانی، تریدر بازار کریپتو و حسابدار بنگاه بازرگانی از مشهد. ژورنال معاملات و سوابق حرفه‌ای.';
+   button.textContent=en?'فارسی':'English';
+   button.setAttribute('aria-label',en?'Switch to Persian':'Switch to English');
+   try{localStorage.setItem('site-language',lang)}catch(e){}
+   window.dispatchEvent(new Event('site-language-change'));
+ }
+ button.addEventListener('click',()=>setLanguage(root.lang==='fa'?'en':'fa'));
+ let initial='fa';try{initial=localStorage.getItem('site-language')||'fa'}catch(e){}
+ setLanguage(initial);
+})();
+</script>
 </body>
 </html>

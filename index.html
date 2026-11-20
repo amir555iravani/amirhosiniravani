@@ -141,6 +141,68 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;gap:2
 .viewer-note{margin-top:12px}
 @media(max-width:600px){.viewer{padding:14px}.viewer-controls{grid-template-columns:1fr}.search-label{grid-column:auto}.table-footer{align-items:flex-start;flex-direction:column}}
 
+
+/* Mobile layout refinements */
+html { max-width:100%; overflow-x:clip; }
+body { width:100%; min-width:320px; overflow-x:clip; }
+.wrap,.sec-grid,.hero-row,.tl,.viewer,.viewer-head,.viewer-controls,.table-wrap,
+.sec-grid > *,.hero-row > *,.tl li > * { min-width:0; }
+.bar nav { flex-wrap:wrap; align-items:center; }
+.hero h1 { overflow-wrap:anywhere; }
+.btn { white-space:normal; text-align:center; }
+.curve,.curve svg,.viewer,.table-wrap { max-width:100%; }
+.table-wrap { -webkit-overflow-scrolling:touch; overscroll-behavior-inline:contain; }
+#dataTable { max-width:none; }
+
+@media (max-width:700px) {
+  :root { --gutter:20px; }
+  body { font-size:16px; line-height:1.85; }
+  .bar { justify-content:center; padding-block:16px; }
+  .bar nav { width:100%; justify-content:center; gap:10px 18px; font-size:14px; }
+  .hero { padding-block:34px 58px; }
+  .hero h1 { font-size:clamp(58px,15vw,104px); line-height:1; letter-spacing:0; }
+  .hero-row { gap:22px; margin-top:28px; }
+  .lead { font-size:clamp(18px,5vw,22px); line-height:1.8; }
+  .hero-side { max-width:none; }
+  .actions { display:grid; grid-template-columns:minmax(0,1fr); gap:10px; }
+  .actions .btn { width:100%; padding:12px 16px; font-size:15px; }
+  .sec { padding-block:48px; border-top-width:4px; }
+  .sec-grid { gap:22px; }
+  .sec h2 { font-size:clamp(38px,10vw,54px); line-height:1.15; }
+  .tl { gap:26px; }
+  .tl li { gap:4px; }
+  .tl .what { font-size:27px; }
+  .journal .intro { font-size:17px; line-height:1.85; margin-bottom:28px; }
+  .wall { grid-template-columns:repeat(10,minmax(0,1fr)); gap:5px; width:100%; }
+  .wall i { border-width:2px; }
+  .curve { margin-top:32px; }
+  .findings,.files { margin-top:38px; }
+  .findings h3,.files h3 { font-size:24px; }
+  .fine { font-size:13px; margin-top:30px; }
+  .contact { padding-block:50px; }
+  .contact h2 { font-size:clamp(44px,12vw,76px); line-height:1.12; }
+  footer .wrap { align-items:flex-start; flex-direction:column; gap:8px; font-size:13px; }
+  .viewer { padding:12px; border-radius:10px; }
+  .viewer-head { align-items:flex-start; flex-direction:column; gap:8px; }
+  .viewer-head h3 { font-size:23px; }
+  .viewer-controls { grid-template-columns:minmax(0,1fr); }
+  .search-label { grid-column:auto; }
+  .table-footer { align-items:stretch; flex-direction:column; }
+  .table-footer div { flex-wrap:wrap; }
+  .table-footer button { min-height:40px; }
+}
+@media (max-width:380px) {
+  :root { --gutter:16px; }
+  .hero h1 { font-size:clamp(52px,14.5vw,62px); }
+  .bar nav { gap:8px 12px; font-size:13px; }
+  .wall { gap:4px; }
+  .wall i { border-width:1.5px; }
+  .viewer { padding:9px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { scroll-behavior:auto !important; transition-duration:.01ms !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; }
+}
+
 </style>
 </head>
 <body>

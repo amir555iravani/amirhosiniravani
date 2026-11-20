@@ -428,7 +428,7 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
 <div class="period-picker"><span>مجموع هر دو ژورنال</span><strong>۱۴۵ معامله</strong></div></div>
 <div class="journal-kpis" id="journalKpis" aria-live="polite"></div>
 <div class="journal-analysis">
-<section class="journal-panel equity-panel"><div class="panel-title"><div><h3>منحنی رشد حساب</h3><p>تغییر موجودی بر اساس نتایج ثبت‌شده هر معامله</p></div><span class="panel-tag" id="equityRange"></span></div><div class="equity-chart" id="equityChart"></div></section>
+<section class="journal-panel equity-panel"><div class="panel-title"><div><h3>منحنی رشد حساب</h3><p>تغییر موجودی بر اساس نتایج ثبت‌شده هر معامله</p></div></div><div class="equity-chart" id="equityChart"></div></section>
 <section class="journal-panel outcome-panel"><div class="panel-title"><div><h3>ترکیب نتایج</h3><p>تعداد معاملات بر اساس نتیجه نهایی</p></div></div><div id="outcomeBreakdown"></div></section>
 </div>
 <section class="journal-panel history-panel" id="tradeHistory"><div class="panel-title history-heading"><div><h3>تاریخچه معاملات</h3><p>هر نشان، نتیجه یک معامله بسته‌شده را مشخص می‌کند.</p></div><label class="history-search"><span>جست‌وجو</span><input id="historySearch" type="search" placeholder="نماد، جهت یا نتیجه..." autocomplete="off"></label></div>
@@ -506,7 +506,7 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
 
 <script>
 (()=>{
- const kpis=document.getElementById('journalKpis'),chart=document.getElementById('equityChart'),range=document.getElementById('equityRange'),breakdown=document.getElementById('outcomeBreakdown'),tbody=document.querySelector('#historyTable tbody'),search=document.getElementById('historySearch'),count=document.getElementById('historyCount');
+ const kpis=document.getElementById('journalKpis'),chart=document.getElementById('equityChart'),breakdown=document.getElementById('outcomeBreakdown'),tbody=document.querySelector('#historyTable tbody'),search=document.getElementById('historySearch'),count=document.getElementById('historyCount');
  if(!kpis||!tbody)return;
  const raw=JSON.parse(document.getElementById('workbook-data').textContent);
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -520,7 +520,7 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
  let maxLosingStreak=0,currentLosingStreak=0;data.forEach(x=>{if(x.pnl<=-0.4){currentLosingStreak++;maxLosingStreak=Math.max(maxLosingStreak,currentLosingStreak)}else{currentLosingStreak=0}});
  const labels=en?['Closed trades','Win rate','Maximum Losing Streak','Average R']:['معاملات بسته‌شده','نرخ برد','Maximum Losing Streak','میانگین R'],values=[fmt(data.length,0),fmt(winRate,1)+'%',fmt(maxLosingStreak,0),fmt(avgR,2)+'R'],notes=en?['From both journals','Winning trades / all trades','Longest sequence of consecutive losses','Mean positive R per trade']:['مجموع هر دو ژورنال','معاملات سودده از کل معاملات','بیشترین تعداد باخت متوالی','میانگین R معاملات با R مثبت'];
  kpis.innerHTML=labels.map((label,i)=>'<article class="journal-kpi"><span>'+label+'</span><strong>'+values[i]+'</strong><small>'+notes[i]+'</small></article>').join('');
- range.textContent=(en?'Opening ':'شروع ')+money(first)+' · '+(en?'Latest ':'آخرین ')+money(last);
+
  const vals=data.map(x=>x.balance),min=Math.min(...vals),max=Math.max(...vals),span=max-min||1,pts=vals.map((v,i)=>(10+i*(780/Math.max(1,vals.length-1))).toFixed(1)+','+(155-(v-min)/span*125).toFixed(1)).join(' '),area='10,155 '+pts+' '+(10+(vals.length-1)*780/Math.max(1,vals.length-1)).toFixed(1)+',155';
  chart.innerHTML='<svg viewBox="0 0 800 180" role="img" aria-label="'+(en?'Account balance progression':'روند تغییر موجودی حساب')+'"><defs><linearGradient id="eqFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3aff55" stop-opacity=".28"/><stop offset="1" stop-color="#3aff55" stop-opacity="0"/></linearGradient></defs><line x1="10" y1="155" x2="790" y2="155" stroke="#315338" stroke-width="1"/><polygon points="'+area+'" fill="url(#eqFill)"/><polyline points="'+pts+'" fill="none" stroke="#3aff55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="chart-axis"><span>'+esc(dateFromExcel(data[0]?.date||0))+'</span><span>'+esc(dateFromExcel(data[data.length-1]?.date||0))+'</span></div>';
  const n=data.length||1,parts=[{name:en?'Wins':'سودده',n:wins.length,cls:'win'},{name:en?'Losses':'زیان‌ده',n:losses.length,cls:'loss'},{name:en?'Breakeven':'سر‌به‌سر',n:flats.length,cls:'flat'}];

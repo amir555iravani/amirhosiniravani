@@ -482,13 +482,13 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function dataset(){return source.value==='csv'?DATA.csv:DATA.books[source.value][sheet.value]}
  function render(){
+  const en=document.documentElement.lang==='en';
   const d=dataset(), q=search.value.trim().toLowerCase();
   filtered=d.rows.map((r,i)=>({r,i})).filter(x=>!q||x.r.some(v=>String(v??'').toLowerCase().includes(q)));
   const pages=Math.max(1,Math.ceil(filtered.length/pageSize)); page=Math.min(page,pages-1);
   head.innerHTML='<tr>'+d.columns.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr>';
   const slice=filtered.slice(page*pageSize,(page+1)*pageSize);
   body.innerHTML=slice.map(x=>'<tr>'+x.r.map(v=>'<td title="'+esc(v)+'">'+esc(v)+'</td>').join('')+'</tr>').join('') || '<tr><td colspan="'+d.columns.length+'">'+(en?'No results found':'موردی پیدا نشد')+'</td></tr>';
-  const en=document.documentElement.lang==='en';
   const locale=en?'en-US':'fa-IR';
   count.textContent=filtered.length.toLocaleString(locale)+(en?' rows':' ردیف');
   pageInfo.textContent=(filtered?((filtered.length?(page*pageSize+1).toLocaleString(locale)+(en?' to ':' تا ')+Math.min((page+1)*pageSize,filtered.length).toLocaleString(locale):'0')):'0')+(en?' of ':' از ')+filtered.length.toLocaleString(locale);

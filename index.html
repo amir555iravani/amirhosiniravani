@@ -424,8 +424,8 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
 
   <section class="sec journal on-dark" id="journal">
 <div class="wrap">
-<div class="journal-heading"><div><h2>ژورنال معاملات</h2><p class="intro">عملکرد دو دوره معاملاتی را جداگانه بررسی کن؛ آمار، نمودار و تاریخچه با انتخاب هر ژورنال به‌روزرسانی می‌شود.</p></div>
-<label class="period-picker"><span>انتخاب دوره</span><select id="journalPeriod" aria-label="انتخاب ژورنال"><option value="new" selected>ژورنال دوم · از آبان ۱۴۰۴</option><option value="old">ژورنال اول · تیر تا آبان ۱۴۰۴</option></select></label></div>
+<div class="journal-heading"><div><h2>ژورنال معاملات</h2><p class="intro">عملکرد هر دو دوره در یک گزارش یکپارچه؛ آمار، نمودار و تاریخچه بر اساس مجموع ۱۴۵ معامله نمایش داده می‌شود.</p></div>
+<div class="period-picker"><span>مجموع هر دو ژورنال</span><strong>۱۴۵ معامله</strong></div></div>
 <div class="journal-kpis" id="journalKpis" aria-live="polite"></div>
 <div class="journal-analysis">
 <section class="journal-panel equity-panel"><div class="panel-title"><div><h3>منحنی رشد حساب</h3><p>تغییر موجودی بر اساس نتایج ثبت‌شده هر معامله</p></div><span class="panel-tag" id="equityRange"></span></div><div class="equity-chart" id="equityChart"></div></section>
@@ -506,16 +506,17 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
 
 <script>
 (()=>{
- const period=document.getElementById('journalPeriod'),kpis=document.getElementById('journalKpis'),chart=document.getElementById('equityChart'),range=document.getElementById('equityRange'),breakdown=document.getElementById('outcomeBreakdown'),tbody=document.querySelector('#historyTable tbody'),search=document.getElementById('historySearch'),count=document.getElementById('historyCount');
- if(!period||!kpis||!tbody)return;
+ const kpis=document.getElementById('journalKpis'),chart=document.getElementById('equityChart'),range=document.getElementById('equityRange'),breakdown=document.getElementById('outcomeBreakdown'),tbody=document.querySelector('#historyTable tbody'),search=document.getElementById('historySearch'),count=document.getElementById('historyCount');
+ if(!kpis||!tbody)return;
  const raw=JSON.parse(document.getElementById('workbook-data').textContent);
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const fmt=(v,d=2)=>Number(v||0).toLocaleString(document.documentElement.lang==='en'?'en-US':'fa-IR',{minimumFractionDigits:d,maximumFractionDigits:d});
  const money=v=>(v<0?'−':'')+'$'+fmt(Math.abs(v));
  const dateFromExcel=n=>{const dt=new Date(Date.UTC(1899,11,30)+Number(n)*86400000);return dt.toLocaleDateString(document.documentElement.lang==='en'?'en-US':'fa-IR',{year:'numeric',month:'short',day:'numeric',timeZone:'UTC'});};
  function records(key){const book=raw.books[key],results=book.Results.rows.filter(r=>r.some(v=>v!==null&&v!=='')),trades=book['Trade Log'].rows.filter(r=>r[0]!==null&&r[0]!==undefined&&r[0]!=='');return results.map((r,i)=>({n:r[0],date:r[2],pnl:Number(r[7])||0,rr:Number(r[8])||0,balance:Number(r[10])||0,symbol:trades[i]?.[12]||'—',side:trades[i]?.[14]||'—'}));}
+ const data=records('old').concat(records('new')).sort((a,b)=>a.date-b.date).map((x,i)=>({...x,n:i+1}));
  function render(){
- const en=document.documentElement.lang==='en',data=records(period.value),isNearBreakeven=x=>x.pnl<0&&Math.abs(x.pnl)<0.4,wins=data.filter(x=>x.pnl>0),losses=data.filter(x=>x.pnl<=-0.4),flats=data.filter(x=>x.pnl===0||isNearBreakeven(x)),total=data.reduce((a,x)=>a+x.pnl,0),winRate=data.length?wins.length/data.length*100:0,avgR=data.length?data.reduce((a,x)=>a+x.rr,0)/data.length:0,first=data[0]?.balance||0,last=data[data.length-1]?.balance||0;
+ const en=document.documentElement.lang==='en',isNearBreakeven=x=>x.pnl<0&&Math.abs(x.pnl)<0.4,wins=data.filter(x=>x.pnl>0),losses=data.filter(x=>x.pnl<=-0.4),flats=data.filter(x=>x.pnl===0||isNearBreakeven(x)),total=data.reduce((a,x)=>a+x.pnl,0),winRate=data.length?wins.length/data.length*100:0,avgR=data.length?data.reduce((a,x)=>a+x.rr,0)/data.length:0,first=data[0]?.balance||0,last=data[data.length-1]?.balance||0;
  const labels=en?['Closed trades','Win rate','Net P&L','Average R']:['معاملات بسته‌شده','نرخ برد','سود / زیان خالص','میانگین R'],values=[fmt(data.length,0),fmt(winRate,1)+'%',money(total),fmt(avgR,2)+'R'],notes=en?['From the selected workbook','Winning trades / all trades','Sum of recorded net P&L','Mean achieved R per trade']:['بر اساس فایل انتخاب‌شده','معاملات سودده از کل معاملات','مجموع سود و زیان خالص ثبت‌شده','میانگین R تحقق‌یافته هر معامله'];
  kpis.innerHTML=labels.map((label,i)=>'<article class="journal-kpi"><span>'+label+'</span><strong>'+values[i]+'</strong><small>'+notes[i]+'</small></article>').join('');
  range.textContent=(en?'Opening ':'شروع ')+money(first)+' · '+(en?'Latest ':'آخرین ')+money(last);
@@ -527,7 +528,7 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
  tbody.innerHTML=shown.map(x=>{const status=x.pnl>0?'win':x.pnl<=-0.4?'loss':'flat',statusText=en?(status==='win'?'Win':status==='loss'?'Loss':'Flat'):(status==='win'?'سودده':status==='loss'?'زیان‌ده':'سر‌به‌سر'),side=en?(String(x.side).toUpperCase()==='LONG'?'Long':String(x.side).toUpperCase()==='SHORT'?'Short':x.side):(String(x.side).toUpperCase()==='LONG'?'لانگ':String(x.side).toUpperCase()==='SHORT'?'شورت':x.side);return '<tr><td>'+esc(x.n)+'</td><td>'+esc(String(x.symbol).toUpperCase())+'</td><td>'+esc(side)+'</td><td>'+esc(dateFromExcel(x.date))+'</td><td class="'+(status==='win'?'pnl-positive':status==='loss'?'pnl-negative':'')+'">'+money(x.pnl)+'</td><td>'+fmt(x.rr,2)+'R</td><td>'+money(x.balance)+'</td><td><span class="trade-result"><i class="trade-dot '+status+'"></i>'+statusText+'</span></td></tr>';}).join('')||'<tr><td colspan="8">'+(en?'No matching trades':'معامله‌ای پیدا نشد')+'</td></tr>';
  count.textContent=en?(shown.length+' of '+data.length+' trades'):(fmt(shown.length,0)+' از '+fmt(data.length,0)+' معامله');
  }
- period.addEventListener('change',()=>{search.value='';render()});search.addEventListener('input',render);window.addEventListener('site-language-change',render);render();
+ search.addEventListener('input',render);window.addEventListener('site-language-change',render);render();
 })();
 </script>
 

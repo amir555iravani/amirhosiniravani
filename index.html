@@ -329,6 +329,50 @@ body { background: var(--ink); color: var(--green); }
 /* Footer color inversion to match the homepage */
 footer { background: var(--ink); color: var(--green); border-top-color: var(--green); }
 
+
+/* Trading journal dashboard refresh */
+.journal{padding-block:clamp(48px,6vw,82px)}
+.journal-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:30px}
+.journal-heading h2{max-width:none}
+.journal .intro{margin:14px 0 0;max-width:48em;font-size:clamp(16px,1.5vw,19px);opacity:.82}
+.period-picker,.history-search{display:grid;gap:6px;font-size:13px;font-weight:800;min-width:220px}
+.period-picker select,.history-search input{width:100%;background:#101d13;color:#effff0;border:1px solid #47764d;border-radius:10px;padding:12px 14px;font:inherit;font-size:14px}
+.period-picker select:focus,.history-search input:focus{outline:2px solid var(--green);outline-offset:2px}
+.journal-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:28px 0}
+.journal-kpi{padding:20px;border:1px solid #315338;border-radius:14px;background:linear-gradient(145deg,#102317,#07140a);min-width:0}
+.journal-kpi span{display:block;font-size:13px;opacity:.72;font-weight:700}
+.journal-kpi strong{display:block;font-size:clamp(23px,3vw,34px);line-height:1.4;margin-top:5px;overflow-wrap:anywhere;font-weight:800}
+.journal-kpi small{font-size:12px;opacity:.65}
+.journal-analysis{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(240px,1fr);gap:14px;margin-bottom:14px}
+.journal-panel{border:1px solid #315338;border-radius:14px;background:#07140a;padding:22px;min-width:0}
+.panel-title{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
+.panel-title h3{font-family:var(--display);font-size:25px;line-height:1.35;font-weight:400;color:var(--green)}
+.panel-title p{font-size:13px;opacity:.68}
+.panel-tag{font-size:12px;border:1px solid #315338;border-radius:30px;padding:4px 10px;white-space:nowrap}
+.equity-chart svg{display:block;width:100%;height:auto;min-height:170px;overflow:visible}
+.chart-axis{display:flex;justify-content:space-between;font-size:11px;opacity:.6;margin-top:4px}
+.breakdown-row{margin:17px 0}
+.breakdown-label{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin-bottom:7px}
+.breakdown-track{height:9px;background:#1c3321;border-radius:20px;overflow:hidden}
+.breakdown-fill{height:100%;border-radius:20px;background:var(--green)}
+.breakdown-fill.loss{background:#a0a9a1}.breakdown-fill.flat{background:#59715d}
+.history-panel{margin-top:14px}.history-heading{align-items:flex-end}
+.history-search{min-width:min(280px,100%)}
+.history-table-wrap{width:100%;overflow:auto;max-height:560px;border:1px solid #29452e;border-radius:9px;direction:ltr}
+.history-table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0;color:#eaffec;font-size:13px;line-height:1.5;direction:ltr}
+.history-table th,.history-table td{padding:11px 12px;border-bottom:1px solid #29452e;text-align:left;white-space:nowrap}
+.history-table th{position:sticky;top:0;background:#17351e;color:var(--green);z-index:1;font-weight:800}
+.history-table tbody tr:nth-child(even){background:#0c1d11}.history-table tbody tr:hover{background:#183820}
+.trade-result{display:inline-flex;align-items:center;gap:7px}
+.trade-dot{width:11px;height:11px;display:inline-block;border-radius:3px;border:1px solid var(--green);flex:0 0 auto}
+.trade-dot.win{background:var(--green)}.trade-dot.loss{background:transparent}.trade-dot.flat{background:#59715d;border-color:#9ab39d}
+.pnl-positive{color:var(--green);font-weight:800}.pnl-negative{color:#d1d8d2;font-weight:700}
+.history-footer{display:flex;justify-content:space-between;gap:12px;margin-top:12px;font-size:12px;opacity:.65}
+.journal .files{max-width:none;margin-top:42px;padding-top:30px;border-top:1px solid #315338}
+.journal .fine{max-width:60em;opacity:.65}
+@media(max-width:850px){.journal-heading{align-items:stretch;flex-direction:column}.period-picker{max-width:360px}.journal-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.journal-analysis{grid-template-columns:1fr}}
+@media(max-width:600px){.journal-panel{padding:15px}.journal-kpi{padding:14px}.journal-kpi strong{font-size:25px}.panel-title h3{font-size:22px}.history-heading{align-items:stretch;flex-direction:column}.history-search{min-width:0}.history-footer{flex-direction:column;gap:4px}.journal-kpis{gap:9px}}
+
 </style>
 </head>
 <body>
@@ -379,82 +423,23 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
   </section>
 
   <section class="sec journal on-dark" id="journal">
-    <div class="wrap sec-grid">
-      <h2>ژورنال معاملات</h2>
-      <div>
-        <p class="intro">هر مربع، یک پوزیشن بسته‌شده در بازار فیوچرز است؛ از ۲۸ آبان ۱۴۰۴ تا ۱۳ آبان ۱۴۰۵، به ترتیب زمان. برنده‌ها و بازنده‌ها هر دو در این تصویر هستند.</p>
-        <div class="wall pre" id="wall" role="img" aria-label="۹۰ معامله بسته‌شده، ۱۹ سودده و بقیه زیان‌ده">
-          <i class="l s" style="--i:0" title="UNI Short -0.45 USDT"></i><i class="l s" style="--i:1" title="BTC Short -0.46 USDT"></i><i class="l" style="--i:2" title="BNB Long -0.41 USDT"></i><i class="l" style="--i:3" title="BTC Long -0.43 USDT"></i><i class="l" style="--i:4" title="ETH Long -0.46 USDT"></i><i class="l s" style="--i:5" title="BTC Short -0.46 USDT"></i><i class="l" style="--i:6" title="BTC Long -0.04 USDT"></i><i class="l s" style="--i:7" title="BTC Short -0.07 USDT"></i><i class="l" style="--i:8" title="BTC Long -0.45 USDT"></i><i class="l" style="--i:9" title="BTC Long -0.08 USDT"></i><i class="l" style="--i:10" title="BTC Long -0.53 USDT"></i><i class="l" style="--i:11" title="ETH Long -0.46 USDT"></i><i class="l s" style="--i:12" title="ETH Short -0.47 USDT"></i><i class="l" style="--i:13" title="ETH Long -0.45 USDT"></i><i class="l" style="--i:14" title="ETH Long -0.47 USDT"></i><i class="l" style="--i:15" title="BTC Long -0.45 USDT"></i><i class="l s" style="--i:16" title="CRV Short -0.46 USDT"></i><i class="l s" style="--i:17" title="ICP Short -0.50 USDT"></i><i class="w s" style="--i:18" title="GRT Short +0.96 USDT"></i><i class="l" style="--i:19" title="CHZ Long -0.05 USDT"></i><i class="l" style="--i:20" title="AAVE Long -0.51 USDT"></i><i class="l" style="--i:21" title="APE Long -0.46 USDT"></i><i class="l s" style="--i:22" title="ETH Short -1.05 USDT"></i><i class="l" style="--i:23" title="RENDER Long -0.44 USDT"></i><i class="w s" style="--i:24" title="RENDER Short +0.09 USDT"></i><i class="w" style="--i:25" title="ALLO Long +3.02 USDT"></i><i class="l s" style="--i:26" title="DOT Short -1.60 USDT"></i><i class="l s" style="--i:27" title="S Short -1.66 USDT"></i><i class="l s" style="--i:28" title="AVAX Short -1.80 USDT"></i><i class="l" style="--i:29" title="HYPE Long -1.52 USDT"></i><i class="l" style="--i:30" title="HYPE Long -1.46 USDT"></i><i class="w s" style="--i:31" title="KITE Short +3.19 USDT"></i><i class="l s" style="--i:32" title="HYPE Short -1.44 USDT"></i><i class="w" style="--i:33" title="HBAR Long +1.28 USDT"></i><i class="w" style="--i:34" title="WLD Long +4.67 USDT"></i><i class="l" style="--i:35" title="XLM Long -1.50 USDT"></i><i class="l s" style="--i:36" title="SEI Short -1.51 USDT"></i><i class="l" style="--i:37" title="PI Long -1.58 USDT"></i><i class="l s" style="--i:38" title="MEGA Short -1.52 USDT"></i><i class="l s" style="--i:39" title="SEI Short -1.51 USDT"></i><i class="w s" style="--i:40" title="SUI Short +0.00 USDT"></i><i class="l s" style="--i:41" title="BNB Short -0.08 USDT"></i><i class="w s" style="--i:42" title="ENA Short +4.57 USDT"></i><i class="l" style="--i:43" title="CAKE Long -1.38 USDT"></i><i class="l" style="--i:44" title="AVAX Long -1.33 USDT"></i><i class="l" style="--i:45" title="AVAX Long -1.40 USDT"></i><i class="w" style="--i:46" title="SUI Long +3.11 USDT"></i><i class="l" style="--i:47" title="NEAR Long -1.43 USDT"></i><i class="l" style="--i:48" title="HYPE Long -1.57 USDT"></i><i class="l s" style="--i:49" title="XPL Short -1.58 USDT"></i><i class="w" style="--i:50" title="APE Long +3.11 USDT"></i><i class="l" style="--i:51" title="BTC Long -1.48 USDT"></i><i class="l" style="--i:52" title="ETH Long -1.51 USDT"></i><i class="l s" style="--i:53" title="XLM Short -1.45 USDT"></i><i class="l s" style="--i:54" title="BTC Short -1.42 USDT"></i><i class="l s" style="--i:55" title="LDO Short -2.20 USDT"></i><i class="l" style="--i:56" title="LTC Long -1.88 USDT"></i><i class="l" style="--i:57" title="CFX Long -1.80 USDT"></i><i class="l s" style="--i:58" title="ALGO Short -1.22 USDT"></i><i class="l" style="--i:59" title="PENGU Long -1.87 USDT"></i><i class="l" style="--i:60" title="BTC Long -1.97 USDT"></i><i class="l" style="--i:61" title="LTC Long -3.65 USDT"></i><i class="w" style="--i:62" title="HYPE Long +4.01 USDT"></i><i class="w" style="--i:63" title="PUMPFUN Long +3.95 USDT"></i><i class="l" style="--i:64" title="BTC Long -1.69 USDT"></i><i class="l" style="--i:65" title="BTC Long -1.72 USDT"></i><i class="l" style="--i:66" title="ETH Long -1.97 USDT"></i><i class="l" style="--i:67" title="BTC Long -1.79 USDT"></i><i class="l s" style="--i:68" title="SUI Short -1.78 USDT"></i><i class="l" style="--i:69" title="ETH Long -1.77 USDT"></i><i class="w s" style="--i:70" title="BTC Short +3.27 USDT"></i><i class="l" style="--i:71" title="WLD Long -1.80 USDT"></i><i class="w" style="--i:72" title="ETH Long +10.01 USDT"></i><i class="w" style="--i:73" title="LINK Long +17.71 USDT"></i><i class="w" style="--i:74" title="NEAR Long +3.87 USDT"></i><i class="l" style="--i:75" title="JUP Long -1.88 USDT"></i><i class="l s" style="--i:76" title="LDO Short -0.13 USDT"></i><i class="l" style="--i:77" title="OP Long -2.66 USDT"></i><i class="l" style="--i:78" title="HYPE Long -2.00 USDT"></i><i class="w" style="--i:79" title="ETHFI Long +6.74 USDT"></i><i class="l" style="--i:80" title="ENA Long -1.95 USDT"></i><i class="l s" style="--i:81" title="AAVE Short -2.29 USDT"></i><i class="l s" style="--i:82" title="AAVE Short -1.70 USDT"></i><i class="w s" style="--i:83" title="BTC Short +2.19 USDT"></i><i class="l" style="--i:84" title="BTC Long -0.10 USDT"></i><i class="w s" style="--i:85" title="ETH Short +7.70 USDT"></i><i class="l s" style="--i:86" title="ENA Short -2.27 USDT"></i><i class="l s" style="--i:87" title="ENA Short -2.27 USDT"></i><i class="l s" style="--i:88" title="BNB Short -2.26 USDT"></i><i class="l s" style="--i:89" title="SOL Short -2.31 USDT"></i>
-        </div>
-        <div class="legend" aria-hidden="true">
-          <span><i class="w"></i>معامله سودده</span>
-          <span><i></i>معامله زیان‌ده</span>
-          <span><i class="s"></i>پوزیشن شورت (بدون نقطه: لانگ)</span>
-        </div>
-
-        <div class="curve">
-          <svg viewBox="0 0 900 160" role="img" aria-label="سود و زیان تجمعی معاملات، از قدیم (راست) به جدید (چپ)">
-            <line
-              x1="16"
-              x2="894"
-              y1="70"
-              y2="70"
-              stroke="#3aff55"
-              stroke-width="1.5"
-              stroke-dasharray="5 6"
-              opacity=".7"
-            />
-
-            <polyline
-              points="890.0,28.8 880.3,30.3 870.7,31.6 861.0,33.0 851.3,34.5 841.7,36.0 832.0,36.2 822.4,36.4 812.7,37.9 803.0,38.1 793.4,39.9 783.7,41.3 774.0,42.9 764.4,44.4 754.7,45.9 745.1,47.4 735.4,48.9 725.7,50.5 716.1,47.3 706.4,47.5 696.7,49.2 687.1,50.7 677.4,54.1 667.8,55.5 658.1,55.2 648.4,45.3 638.8,50.6 629.1,56.0 619.4,61.8 609.8,66.8 600.1,71.5 590.4,61.1 580.8,65.8 571.1,61.6 561.5,46.4 551.8,51.3 542.1,56.2 532.5,61.4 522.8,66.3 513.1,71.3 503.5,71.2 493.8,71.5 484.2,56.6 474.5,61.1 464.8,65.4 455.2,70.0 445.5,59.9 435.8,64.5 426.2,69.7 416.5,74.8 406.9,64.7 397.2,69.5 387.5,74.4 377.9,79.1 368.2,83.8 358.5,90.9 348.9,97.1 339.2,103.0 329.6,106.9 319.9,113.0 310.2,119.5 300.6,131.4 290.9,118.3 281.2,105.4 271.6,110.9 261.9,116.5 252.2,122.9 242.6,128.8 232.9,134.6 223.3,140.3 213.6,129.7 203.9,135.6 194.3,102.9 184.6,45.1 174.9,32.5 165.3,38.6 155.6,39.1 146.0,47.7 136.3,54.2 126.6,32.2 117.0,38.6 107.3,46.0 97.6,51.6 88.0,44.4 78.3,44.8 68.7,19.7 59.0,27.1 49.3,34.5 39.7,41.8 30.0,49.4"
-              fill="none"
-              stroke="#3aff55"
-              stroke-width="3.5"
-              stroke-linejoin="round"
-              stroke-linecap="round"
-            />
-          </svg>
-
-          <p>سود و زیان تجمعی (خط چین: صفر). قدیمی‌ترین معامله سمت راست است.</p>
-        </div>
-
-        <div class="findings">
-          <div>
-            <h3>چه چیزی ثبت می‌شود</h3>
-            <p>در ژورنال اکسلی‌ام برای هر معامله این‌ها را می‌نویسم: استراتژی، ساعت و تایم‌فریم ورود، اندازه پوزیشن و اهرم، وضعیت ذهنی، چک‌لیست ورود، اسکرین‌شات، وضعیت RSI و دامیننس بیت‌کوین و اشتباهات. ریسک هر معامله حدود ۰٫۲۲٪ حساب است و ضرر هر معامله‌ی بازنده در ژورنال دوم به‌طور میانگین ۱R مانده است.</p>
-          </div>
-          <div>
-            <h3>دو ژورنال</h3>
-            <p>ژورنال اول (تیر تا آبان ۱۴۰۴) با ۲۰۰ دلار شروع شد و روی ۵۴ معامله با ۲۱۵ دلار بسته شد. ژورنال دوم (از آبان ۱۴۰۴) تا امروز ۸۵ معامله ثبت کرده که ۲۶ تا سودده بوده‌اند؛ میانگین سود برنده‌ها ۲٫۶R و میانگین ضرر بازنده‌ها ۱R بوده است. حجم معاملات بسته‌شده در داده صرافی حدود ۸۳۵۲ دلار است.</p>
-          </div>
-        </div>
-
-        <div class="files" id="data-files">
-          <h3>فایل‌های اصلی و ژورنال آنلاین</h3>
-          <p>فایل‌های اصلی را می‌توانی دانلود کنی؛ یا بدون خروج از سایت، شیت‌ها و معاملات را جست‌وجو و بررسی کنی.</p>
-          <div class="actions">
-            <a class="btn solid" href="july%202025%20to%20oct%202025.xlsb" download="july 2025 to oct 2025.xlsb">دانلود ژورنال تیر تا مهر ۱۴۰۴</a>
-            <a class="btn solid" href="nov%202025.xlsb" download="nov 2025.xlsb">دانلود ژورنال از آبان ۱۴۰۴</a>
-            <a class="btn line" href="futures-position-20251120-20261104_0.csv" download="futures-position-20251120-20261104_0.csv">دانلود خروجی فیوچرز (CSV)</a>
-          </div>
-          <div class="viewer" id="journalViewer">
-            <div class="viewer-head"><div><h3>مشاهده اطلاعات داخل سایت</h3><p>داده‌های شیت‌های فایل‌های اصلی، به‌همراه خروجی معاملات صرافی</p></div><span class="viewer-count" id="rowCount"></span></div>
-            <div class="viewer-controls">
-              <label>منبع داده<select id="sourceSelect"><option value="old">ژورنال تیر تا مهر ۱۴۰۴</option><option value="new">ژورنال از آبان ۱۴۰۴</option><option value="csv">خروجی معاملات فیوچرز (CSV)</option></select></label>
-              <label id="sheetLabel">شیت<select id="sheetSelect"><option>Trade Log</option><option>Results</option><option>Variables</option><option>Calculator</option></select></label>
-              <label class="search-label">جست‌وجو<input id="tableSearch" type="search" placeholder="نماد، استراتژی، نتیجه و..." autocomplete="off"></label>
-            </div>
-            <div class="table-wrap"><table id="dataTable"><thead></thead><tbody></tbody></table></div>
-            <div class="table-footer"><span id="pageInfo"></span><div><button type="button" id="prevPage">قبلی</button><button type="button" id="nextPage">بعدی</button></div></div>
-            <p class="viewer-note">نمایش آنلاین برای بررسی سریع داده‌هاست؛ فایل‌های دانلودی همان فایل‌های اصلی Excel با فرمت XLSB هستند.</p>
-          </div>
-        </div>
-
-        <p class="fine">عددها از خروجی صرافی (پوزیشن‌های بسته‌شده فیوچرز) و دو فایل ژورنال اکسل خودم محاسبه شده‌اند. این‌ها نتیجه گذشته‌اند و تضمینی برای آینده نیستند.</p>
-      </div>
-    </div>
-  </section>
-
+<div class="wrap">
+<div class="journal-heading"><div><h2>ژورنال معاملات</h2><p class="intro">عملکرد دو دوره معاملاتی را جداگانه بررسی کن؛ آمار، نمودار و تاریخچه با انتخاب هر ژورنال به‌روزرسانی می‌شود.</p></div>
+<label class="period-picker"><span>انتخاب دوره</span><select id="journalPeriod" aria-label="انتخاب ژورنال"><option value="new" selected>ژورنال دوم · از آبان ۱۴۰۴</option><option value="old">ژورنال اول · تیر تا آبان ۱۴۰۴</option></select></label></div>
+<div class="journal-kpis" id="journalKpis" aria-live="polite"></div>
+<div class="journal-analysis">
+<section class="journal-panel equity-panel"><div class="panel-title"><div><h3>منحنی رشد حساب</h3><p>تغییر موجودی بر اساس نتایج ثبت‌شده هر معامله</p></div><span class="panel-tag" id="equityRange"></span></div><div class="equity-chart" id="equityChart"></div></section>
+<section class="journal-panel outcome-panel"><div class="panel-title"><div><h3>ترکیب نتایج</h3><p>تعداد معاملات بر اساس نتیجه نهایی</p></div></div><div id="outcomeBreakdown"></div></section>
+</div>
+<section class="journal-panel history-panel" id="tradeHistory"><div class="panel-title history-heading"><div><h3>تاریخچه معاملات</h3><p>هر نشان، نتیجه یک معامله بسته‌شده را مشخص می‌کند.</p></div><label class="history-search"><span>جست‌وجو</span><input id="historySearch" type="search" placeholder="نماد، جهت یا نتیجه..." autocomplete="off"></label></div>
+<div class="history-table-wrap"><table class="history-table" id="historyTable"><thead><tr><th>#</th><th>نماد</th><th>جهت</th><th>تاریخ</th><th>سود / زیان</th><th>R</th><th>موجودی پس از معامله</th><th>نتیجه</th></tr></thead><tbody></tbody></table></div><div class="history-footer"><span id="historyCount"></span><span>جدیدترین معاملات در ابتدای فهرست</span></div></section>
+<div class="files" id="data-files"><h3>فایل‌های اصلی و ژورنال آنلاین</h3><p>فایل‌های اصلی را دانلود کن یا شیت‌ها و خروجی معاملات صرافی را همین‌جا بررسی کن.</p>
+<div class="actions"><a class="btn solid" href="july%202025%20to%20oct%202025.xlsb" download="july 2025 to oct 2025.xlsb">دانلود ژورنال تیر تا مهر ۱۴۰۴</a><a class="btn solid" href="nov%202025.xlsb" download="nov 2025.xlsb">دانلود ژورنال از آبان ۱۴۰۴</a><a class="btn line" href="futures-position-20251120-20261104_0.csv" download="futures-position-20251120-20261104_0.csv">دانلود خروجی فیوچرز (CSV)</a></div>
+<div class="viewer" id="journalViewer"><div class="viewer-head"><div><h3>مشاهده اطلاعات داخل سایت</h3><p>داده‌های شیت‌های فایل‌های اصلی، به‌همراه خروجی معاملات صرافی</p></div><span class="viewer-count" id="rowCount"></span></div>
+<div class="viewer-controls"><label>منبع داده<select id="sourceSelect"><option value="old">ژورنال تیر تا مهر ۱۴۰۴</option><option value="new">ژورنال از آبان ۱۴۰۴</option><option value="csv">خروجی معاملات فیوچرز (CSV)</option></select></label><label id="sheetLabel">شیت<select id="sheetSelect"><option>Trade Log</option><option>Results</option><option>Variables</option><option>Calculator</option></select></label><label class="search-label">جست‌وجو<input id="tableSearch" type="search" placeholder="نماد، استراتژی، نتیجه و..." autocomplete="off"></label></div>
+<div class="table-wrap"><table id="dataTable"><thead></thead><tbody></tbody></table></div><div class="table-footer"><span id="pageInfo"></span><div><button type="button" id="prevPage">قبلی</button><button type="button" id="nextPage">بعدی</button></div></div><p class="viewer-note">نمایش آنلاین برای بررسی سریع داده‌هاست؛ فایل‌های دانلودی همان فایل‌های اصلی Excel با فرمت XLSB هستند.</p></div></div>
+<p class="fine">آمار داشبورد مستقیماً از ردیف‌های ثبت‌شده در شیت Results هر فایل محاسبه می‌شود. خروجی صرافی نیز به‌صورت منبع جداگانه در نمایشگر داده‌ها در دسترس است. نتایج گذشته تضمینی برای آینده نیستند.</p>
+</div></section>
   <section class="sec contact" id="contact">
     <div class="wrap">
       <h2>اگر تیمی دارید که بازار مالی را جدی می‌گیرد، بنویسید.</h2>
@@ -511,6 +496,64 @@ footer { background: var(--ink); color: var(--green); border-top-color: var(--gr
  sheet.addEventListener('change',()=>{page=0;render()}); search.addEventListener('input',()=>{page=0;render()});
  prev.addEventListener('click',()=>{page--;render()}); next.addEventListener('click',()=>{page++;render()});
  document.getElementById('sheetLabel').hidden=source.value==='csv';render();\n window.addEventListener('site-language-change',render);
+})();
+</script>
+
+
+<script>
+(()=>{
+ const period=document.getElementById('journalPeriod'),kpis=document.getElementById('journalKpis'),chart=document.getElementById('equityChart'),range=document.getElementById('equityRange'),breakdown=document.getElementById('outcomeBreakdown'),tbody=document.querySelector('#historyTable tbody'),search=document.getElementById('historySearch'),count=document.getElementById('historyCount');
+ if(!period||!kpis||!tbody)return;
+ const raw=JSON.parse(document.getElementById('workbook-data').textContent);
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const fmt=(v,d=2)=>Number(v||0).toLocaleString(document.documentElement.lang==='en'?'en-US':'fa-IR',{minimumFractionDigits:d,maximumFractionDigits:d});
+ const money=v=>(v<0?'−':'')+'{"سوابق":"Experience","ژورنال معاملات":"Trading Journal","تماس":"Contact","امیرحسین":"Amirhossein","ایروانی":"Iravani","تریدر بازار کریپتو، حسابدار بنگاه بازرگانی و دانشجوی مدیریت مالی در مشهد. از سال ۱۴۰۳ معامله می‌کنم و هر معامله‌ام را با جزئیات در ژورنال ثبت می‌کنم.":"Crypto trader, commercial business accountant, and finance student based in Mashhad. I have been trading since 2024 and record every trade in detail in my journal.","دنبال تیم تحلیل یا فضای ترید و کریپتویی هستم که همکارانش واقعاً دنبال بازار مالی باشند و هدفشان ساختن یا جلو بردن چیزی در حوزه مالی و اقتصادی باشد. تولید محتوای درست هم برایم جذاب است.":"I am looking to join an analytical team or a trading and crypto-focused environment where people are genuinely interested in financial markets and building meaningful things in finance and economics. I am also interested in creating thoughtful, useful content.","تلگرام پیام دهید":"Message me on Telegram","ژورنال معاملاتم را ببینید":"View my trading journal","حسابدار بنگاه بازرگانی":"Commercial Business Accountant","برادران ساکن":"Saken Brothers","تریدر بازار کریپتو (آزاد)":"Independent Crypto Trader","فریلنسر":"Freelance","معامله در بازار فیوچرز، با ثبت کامل هر معامله، اندازه ریسک و وضعیت ذهنی هنگام ورود. نتایج واقعی در بخش بعد آمده است.":"Trading futures while documenting every trade, risk size, and mental state at entry. Actual results are shown below.","کارشناسی مدیریت مالی":"B.A. in Financial Management","دانشگاه آزاد اسلامی مشهد":"Islamic Azad University, Mashhad","هر مربع، یک پوزیشن بسته‌شده در بازار فیوچرز است؛ از ۲۸ آبان ۱۴۰۴ تا ۱۳ آبان ۱۴۰۵، به ترتیب زمان. برنده‌ها و بازنده‌ها هر دو در این تصویر هستند.":"Each square represents a closed futures position, shown chronologically from November 19, 2025 to November 4, 2026. Both winning and losing trades are included.","معامله سودده":"Winning trade","معامله زیان‌ده":"Losing trade","پوزیشن شورت (بدون نقطه: لانگ)":"Short position (no dot: long)","سود و زیان تجمعی (خط چین: صفر). قدیمی‌ترین معامله سمت راست است.":"Cumulative profit and loss (dashed line: zero). The oldest trade is on the right.","چه چیزی ثبت می‌شود":"What I Track","در ژورنال اکسلی‌ام برای هر معامله این‌ها را می‌نویسم: استراتژی، ساعت و تایم‌فریم ورود، اندازه پوزیشن و اهرم، وضعیت ذهنی، چک‌لیست ورود، اسکرین‌شات، وضعیت RSI و دامیننس بیت‌کوین و اشتباهات. ریسک هر معامله حدود ۰٫۲۲٪ حساب است و ضرر هر معامله‌ی بازنده در ژورنال دوم به‌طور میانگین ۱R مانده است.":"For every trade, my Excel journal records the strategy, entry time and timeframe, position size and leverage, mental state, entry checklist, screenshots, RSI and Bitcoin dominance, and mistakes. Risk per trade is approximately 0.22% of the account, and the average loss on losing trades in the second journal has remained at 1R.","دو ژورنال":"Two Journals","ژورنال اول (تیر تا آبان ۱۴۰۴) با ۲۰۰ دلار شروع شد و روی ۵۴ معامله با ۲۱۵ دلار بسته شد. ژورنال دوم (از آبان ۱۴۰۴) تا امروز ۸۵ معامله ثبت کرده که ۲۶ تا سودده بوده‌اند؛ میانگین سود برنده‌ها ۲٫۶R و میانگین ضرر بازنده‌ها ۱R بوده است. حجم معاملات بسته‌شده در داده صرافی حدود ۸۳۵۲ دلار است.":"The first journal (July–November 2025) started with $200 and ended at $215 across 54 trades. The second journal (since November 2025) contains 85 trades, 26 of them profitable. Average winning trade: 2.6R; average losing trade: 1R. The exchange data shows approximately $8,352 in closed trading volume.","فایل‌های اصلی و ژورنال آنلاین":"Source Files & Online Journal","فایل‌های اصلی را می‌توانی دانلود کنی؛ یا بدون خروج از سایت، شیت‌ها و معاملات را جست‌وجو و بررسی کنی.":"You can download the original files or search and review the sheets and trades without leaving this website.","دانلود ژورنال تیر تا مهر ۱۴۰۴":"Download Journal: Jul–Oct 2025","دانلود ژورنال از آبان ۱۴۰۴":"Download Journal: Since Nov 2025","دانلود خروجی فیوچرز (CSV)":"Download Futures Export (CSV)","مشاهده اطلاعات داخل سایت":"Browse Data on This Site","داده‌های شیت‌های فایل‌های اصلی، به‌همراه خروجی معاملات صرافی":"Data from the original workbook sheets, plus the exchange trade export","منبع داده":"Data source","ژورنال تیر تا مهر ۱۴۰۴":"Journal: Jul–Oct 2025","ژورنال از آبان ۱۴۰۴":"Journal: Since Nov 2025","خروجی معاملات فیوچرز (CSV)":"Futures Trades Export (CSV)","شیت":"Sheet","جست‌وجو":"Search","نماد، استراتژی، نتیجه و...":"Symbol, strategy, result, etc.","قبلی":"Previous","بعدی":"Next","نمایش آنلاین برای بررسی سریع داده‌هاست؛ فایل‌های دانلودی همان فایل‌های اصلی Excel با فرمت XLSB هستند.":"The online view is for quick data review. Downloaded files are the original Excel workbooks in XLSB format.","عددها از خروجی صرافی (پوزیشن‌های بسته‌شده فیوچرز) و دو فایل ژورنال اکسل خودم محاسبه شده‌اند. این‌ها نتیجه گذشته‌اند و تضمینی برای آینده نیستند.":"Figures are calculated from the exchange export (closed futures positions) and my two Excel journal files. These are historical results and do not guarantee future performance.","اگر تیمی دارید که بازار مالی را جدی می‌گیرد، بنویسید.":"If your team takes financial markets seriously, get in touch.","کانال تلگرام (نمونه کار)":"Telegram Channel (Work Samples)","ساکن مشهد.":"Based in Mashhad.","امیرحسین ایروانی، مشهد":"Amirhossein Iravani, Mashhad","عملکرد دو دوره معاملاتی را جداگانه بررسی کن؛ آمار، نمودار و تاریخچه با انتخاب هر ژورنال به‌روزرسانی می‌شود.":"Review the two trading periods separately. Statistics, chart, and history update when you switch journals.","انتخاب دوره":"Select period","ژورنال دوم · از آبان ۱۴۰۴":"Journal 2 · Since Nov 2025","ژورنال اول · تیر تا آبان ۱۴۰۴":"Journal 1 · Jul–Nov 2025","منحنی رشد حساب":"Account Growth Curve","تغییر موجودی بر اساس نتایج ثبت‌شده هر معامله":"Account balance progression based on recorded trade results","ترکیب نتایج":"Trade Outcomes","تعداد معاملات بر اساس نتیجه نهایی":"Trades grouped by final outcome","تاریخچه معاملات":"Trade History","هر نشان، نتیجه یک معامله بسته‌شده را مشخص می‌کند.":"Each marker indicates the outcome of a closed trade.","جست‌وجو":"Search","نماد، جهت یا نتیجه...":"Symbol, side, or outcome...","نماد":"Symbol","جهت":"Side","تاریخ":"Date","سود / زیان":"P&L","موجودی پس از معامله":"Balance after trade","نتیجه":"Outcome","جدیدترین معاملات در ابتدای فهرست":"Newest trades appear first","فایل‌های اصلی و ژورنال آنلاین":"Source Files & Online Journal","فایل‌های اصلی را دانلود کن یا شیت‌ها و خروجی معاملات صرافی را همین‌جا بررسی کن.":"Download the original files or review workbook sheets and the exchange export here.","آمار داشبورد مستقیماً از ردیف‌های ثبت‌شده در شیت Results هر فایل محاسبه می‌شود. خروجی صرافی نیز به‌صورت منبع جداگانه در نمایشگر داده‌ها در دسترس است. نتایج گذشته تضمینی برای آینده نیستند.":"Dashboard statistics are calculated directly from the recorded rows in each workbook’s Results sheet. The exchange export is available separately in the data viewer. Past performance does not guarantee future results."};
+ const root=document.documentElement, button=document.getElementById('languageToggle');
+ if(!button) return;
+ const nodes=[];
+ const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+ while(walker.nextNode()){const n=walker.currentNode;const key=n.nodeValue.trim();if(dict[key])nodes.push({n,original:n.nodeValue,key});}
+ const attrs=[];
+ document.querySelectorAll('[placeholder],[aria-label]').forEach(el=>{
+   for(const attr of ['placeholder','aria-label']) if(el.hasAttribute(attr)) attrs.push({el,attr,original:el.getAttribute(attr)});
+ });
+ function setLanguage(lang){
+   const en=lang==='en';
+   root.lang=en?'en':'fa';root.dir=en?'ltr':'rtl';
+   nodes.forEach(x=>{x.n.nodeValue=x.original.replace(x.key,en?dict[x.key]:x.key)});
+   attrs.forEach(x=>{const v=x.original.trim();if(en){if(v==='بخش‌های صفحه')x.el.setAttribute(x.attr,'Page sections');else if(v==='۹۰ معامله بسته‌شده، ۱۹ سودده و بقیه زیان‌ده')x.el.setAttribute(x.attr,'90 closed trades, 19 winners and the rest losers');}else x.el.setAttribute(x.attr,x.original)});
+   document.title=en?'Amirhossein Iravani | Trader & Financial Market Analyst':'امیرحسین ایروانی | تریدر و تحلیلگر بازار مالی';
+   const meta=document.querySelector('meta[name="description"]');
+   if(meta)meta.content=en?'Amirhossein Iravani, crypto trader, commercial accountant, and finance student. Trading journal and professional experience.':'امیرحسین ایروانی، تریدر بازار کریپتو و حسابدار بنگاه بازرگانی از مشهد. ژورنال معاملات و سوابق حرفه‌ای.';
+   button.textContent=en?'فارسی':'English';
+   button.setAttribute('aria-label',en?'Switch to Persian':'Switch to English');
+   try{localStorage.setItem('site-language',lang)}catch(e){}
+   window.dispatchEvent(new Event('site-language-change'));
+ }
+ button.addEventListener('click',()=>setLanguage(root.lang==='fa'?'en':'fa'));
+ let initial='fa';try{initial=localStorage.getItem('site-language')||'fa'}catch(e){}
+ setLanguage(initial);
+})();
+</script>
+</body>
+</html>
++fmt(Math.abs(v));
+ const dateFromExcel=n=>{const dt=new Date(Date.UTC(1899,11,30)+Number(n)*86400000);return dt.toLocaleDateString(document.documentElement.lang==='en'?'en-US':'fa-IR',{year:'numeric',month:'short',day:'numeric',timeZone:'UTC'});};
+ function records(key){const book=raw.books[key],results=book.Results.rows.filter(r=>r.some(v=>v!==null&&v!=='')),trades=book['Trade Log'].rows.filter(r=>r[0]!==null&&r[0]!==undefined&&r[0]!=='');return results.map((r,i)=>({n:r[0],date:r[2],pnl:Number(r[7])||0,rr:Number(r[8])||0,balance:Number(r[10])||0,symbol:trades[i]?.[12]||'—',side:trades[i]?.[14]||'—'}));}
+ function render(){
+ const en=document.documentElement.lang==='en',data=records(period.value),wins=data.filter(x=>x.pnl>0),losses=data.filter(x=>x.pnl<0),flats=data.filter(x=>x.pnl===0),total=data.reduce((a,x)=>a+x.pnl,0),winRate=data.length?wins.length/data.length*100:0,avgR=data.length?data.reduce((a,x)=>a+x.rr,0)/data.length:0,first=data[0]?.balance||0,last=data[data.length-1]?.balance||0;
+ const labels=en?['Closed trades','Win rate','Net P&L','Average R']:['معاملات بسته‌شده','نرخ برد','سود / زیان خالص','میانگین R'],values=[fmt(data.length,0),fmt(winRate,1)+'%',money(total),fmt(avgR,2)+'R'],notes=en?['From the selected workbook','Winning trades / all trades','Sum of recorded net P&L','Mean achieved R per trade']:['بر اساس فایل انتخاب‌شده','معاملات سودده از کل معاملات','مجموع سود و زیان خالص ثبت‌شده','میانگین R تحقق‌یافته هر معامله'];
+ kpis.innerHTML=labels.map((label,i)=>'<article class="journal-kpi"><span>'+label+'</span><strong>'+values[i]+'</strong><small>'+notes[i]+'</small></article>').join('');
+ range.textContent=(en?'Opening ':'شروع ')+money(first)+' · '+(en?'Latest ':'آخرین ')+money(last);
+ const vals=data.map(x=>x.balance),min=Math.min(...vals),max=Math.max(...vals),span=max-min||1,pts=vals.map((v,i)=>(10+i*(780/Math.max(1,vals.length-1))).toFixed(1)+','+(155-(v-min)/span*125).toFixed(1)).join(' '),area='10,155 '+pts+' '+(10+(vals.length-1)*780/Math.max(1,vals.length-1)).toFixed(1)+',155';
+ chart.innerHTML='<svg viewBox="0 0 800 180" role="img" aria-label="'+(en?'Account balance progression':'روند تغییر موجودی حساب')+'"><defs><linearGradient id="eqFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3aff55" stop-opacity=".28"/><stop offset="1" stop-color="#3aff55" stop-opacity="0"/></linearGradient></defs><line x1="10" y1="155" x2="790" y2="155" stroke="#315338" stroke-width="1"/><polygon points="'+area+'" fill="url(#eqFill)"/><polyline points="'+pts+'" fill="none" stroke="#3aff55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="chart-axis"><span>'+esc(dateFromExcel(data[0]?.date||0))+'</span><span>'+esc(dateFromExcel(data[data.length-1]?.date||0))+'</span></div>';
+ const n=data.length||1,parts=[{name:en?'Wins':'سودده',n:wins.length,cls:'win'},{name:en?'Losses':'زیان‌ده',n:losses.length,cls:'loss'},{name:en?'Breakeven':'سر‌به‌سر',n:flats.length,cls:'flat'}];
+ breakdown.innerHTML=parts.map(p=>'<div class="breakdown-row"><div class="breakdown-label"><span>'+p.name+'</span><strong>'+p.n+' · '+fmt(p.n/n*100,1)+'%</strong></div><div class="breakdown-track"><div class="breakdown-fill '+p.cls+'" style="width:'+(p.n/n*100)+'%"></div></div></div>').join('');
+ const q=(search.value||'').trim().toLowerCase(),shown=[...data].reverse().filter(x=>[x.n,x.symbol,x.side,x.pnl,x.rr].join(' ').toLowerCase().includes(q));
+ tbody.innerHTML=shown.map(x=>{const status=x.pnl>0?'win':x.pnl<0?'loss':'flat',statusText=en?(status==='win'?'Win':status==='loss'?'Loss':'Flat'):(status==='win'?'سودده':status==='loss'?'زیان‌ده':'سر‌به‌سر'),side=en?(String(x.side).toUpperCase()==='LONG'?'Long':String(x.side).toUpperCase()==='SHORT'?'Short':x.side):(String(x.side).toUpperCase()==='LONG'?'لانگ':String(x.side).toUpperCase()==='SHORT'?'شورت':x.side);return '<tr><td>'+esc(x.n)+'</td><td>'+esc(String(x.symbol).toUpperCase())+'</td><td>'+esc(side)+'</td><td>'+esc(dateFromExcel(x.date))+'</td><td class="'+(x.pnl>0?'pnl-positive':x.pnl<0?'pnl-negative':'')+'">'+money(x.pnl)+'</td><td>'+fmt(x.rr,2)+'R</td><td>'+money(x.balance)+'</td><td><span class="trade-result"><i class="trade-dot '+status+'"></i>'+statusText+'</span></td></tr>';}).join('')||'<tr><td colspan="8">'+(en?'No matching trades':'معامله‌ای پیدا نشد')+'</td></tr>';
+ count.textContent=en?(shown.length+' of '+data.length+' trades'):(fmt(shown.length,0)+' از '+fmt(data.length,0)+' معامله');
+ }
+ period.addEventListener('change',()=>{search.value='';render()});search.addEventListener('input',render);window.addEventListener('site-language-change',render);render();
 })();
 </script>
 

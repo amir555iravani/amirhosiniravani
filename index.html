@@ -302,6 +302,17 @@ body { width:100%; min-width:320px; overflow-x:clip; }
   .contact h2 { font-size: clamp(42px, 11vw, 66px); }
 }
 
+
+/* Homepage color inversion only: header and hero */
+body { background: var(--ink); color: var(--green); }
+#background, .contact, footer { background: var(--green); color: var(--ink); }
+.hero .btn { border-color: var(--green); }
+.hero .btn.solid { background: var(--green); color: var(--ink); }
+.hero .btn.solid:hover { background: transparent; color: var(--green); }
+.hero .btn.line { color: var(--green); }
+.hero .btn.line:hover { background: var(--green); color: var(--ink); }
+.bar a:focus-visible, .hero a:focus-visible { outline-color: var(--green); }
+
 </style>
 </head>
 <body>
